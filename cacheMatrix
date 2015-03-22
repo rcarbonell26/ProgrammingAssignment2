@@ -1,0 +1,38 @@
+makeCacheMatrix <- function(X = matrix()) {
+inverse <- NULL
+set <- function(Y){
+	X <<- Y
+	inverse <<- NULL
+	}
+get <- function() X
+setinv <- function(Inverse) inverse <<- Inverse
+getinv <- function() inverse
+list(set=set,get=get,setinv=setinv,getinv=getinv)
+}
+
+
+cacheSolve <- function(X, ...) 
+{
+if(require("corpcor")){
+	print("corpcor is loaded correctly")
+	} else {
+		print("attempting to install corpcor")
+		install.packages("corpcor")
+		if(require(corpcor)){
+			print("corpcor ready and loaded")
+			} else {
+			stop("cannot install corpcor")
+			}
+		}
+inverse <- X$getinverse()
+if(!is.null(inverse)){
+	message("matrix in memory")
+	return(inverse)
+	}
+message("inverse is not in memory; the inverse ,if exist, is gonna be computed")
+data <- X$get()
+inverse <- pseudoinverse(data, ...)
+X$setinverse(inverse)
+inverse
+}
+
